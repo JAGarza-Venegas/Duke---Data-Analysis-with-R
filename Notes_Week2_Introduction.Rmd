@@ -1,0 +1,72 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# Introduction to Probability and Data with R
+
+## Week 2
+
+### Intro
+
+Evidence such as "my uncle smoke three packs a day and he's in perfectly good health" is called **anecdotical evidence**. (The sample size is so small that it might not be representative of the population.)
+
+
+It is a great idea to first stop and think about what types of variables you are working with in order to easily determine which type of analysis is more appropriate.
+
+### Observational Studies and Experiments
+
+In an **observational study**, researchers collect data in a way that does not directly interfere with how the data arise. In other words, they merely observe. If an observational study uses data from the past, it is called **retrospective** whereas if data is collected throughout the study, **prospective**. Using this kind of study, we can only establish **association** between variables (correlation).
+
+In **experiments**, on the other hand, researchers *randomly assign* subjects to treatement and can, therefore, establish causal connections between the explanatory and response variables.
+
+We have to be aware of possible **confounders**: extraneous variables that affect both the explanatory and response variables, make it seem like there is relationship between  them.
+
+### Sampling and sources of bias.
+
+Sampling is actually quite natural: when we are cooking, we taste a small part of what we are cooking to get an idea of the dish as a whole. We would never eat a whole pot of soup just to check its taste after all.
+
+When you taste a spoonful of soup and decide that spoonful you have tasted is not salty enough, what you are doing is simply exploratory analysis for the sample at hand. If you then generalize and conclude that your entire soup needs salt, that's making an inference. 
+
+A few sources of sampling bias:
+
+- **Convenience sample**: individuals who are easily accesible are more likely to be included.  
+- **Non-responde**: If only a (non-random) fraction of the randomly sampled people respond to a survey such that the sample is no longer representative of the population.  
+- **Voluntary response**: occurs when the sample consists of people who volunteer to respond because they have strong opinions on the issue.  
+
+
+### Experimental design
+
+The four principles of experimental design are:
+
+- Control  
+- Randomize  
+- Replicate  
+- Block
+
+To **control** means to compare treatement of interest to a control group. To **randomize** means randomly assigning subjects to the treatements. To **replicate** means collecting a sufficiently large sample within the study or to replicate the entire study. To **block** means to first group the subjects into blocks based on variables that are suspected to affect the response variable before randomization. 
+
+
+The difference betweeen the blocking and explanatory variables is that **explanatory variables (factors)** are conditions we can impose on experimental units whereas **blocking variables** are characteristics that the experimental units come with, that we would like to control for. Note that **blocking** is like **stratifying** but the former is during random assignment whereas the latter is during random sampling. 
+
+Some final terms:
+
+- **placebo** is a fake treatement, often used as the control group for medical studies.  
+- **placebo effect** is when subjects show changes despite they received the placebo.  
+- **blinding** menas that experimental units do not know which group they are in.  
+- **double-blinding** is when both the experimental units and the researchers do not known the group assignment.
+
+
+### (Spotlight) Random Sample Assignment
+
++---------------+--------------------+-----------------------+---------------------+
+|               | Random Assignment  | No Random Assignment  |                     |
++===============+====================+=======================+=====================+
+| Random        | causal and         | not causal, but       | Generalizability    |
+| Sampling      | generalizable      | generalizable         |                     |
++---------------+--------------------+-----------------------+---------------------+
+| No Random     | causal, but not    | neither causal nor    | No Generalizability |
+| Sampling      | generaizable       | generalizable         |                     |
++---------------+--------------------+-----------------------+---------------------+
+|               | Causation          | Association           |                     |
++---------------+--------------------+-----------------------+---------------------+
