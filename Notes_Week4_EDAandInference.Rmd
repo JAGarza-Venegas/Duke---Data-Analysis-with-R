@@ -1,0 +1,200 @@
+---
+title: "Notes_Week4_EDAandInference"
+author: "Jorge A. Garza-Venegas"
+date: "2022-07-27"
+output: html_document
+---
+
+# Exploring Numerical Data
+
+## (Learning objectives.)Summary)
+
+Whenever a numerical variable is studied, the shape, center and spread of its distribution should be mentioned, as well as the unusual observations.
+
+A distribution's shape can be described as symmetric, right or left skewed, unimodal, bimodal or multimodal, or uniform.
+
+Intensity maps are used for spatial distribution of the data.
+
+Robust statistics are used to assess *outliers*, which are unusual observations within the data set.
+
+## Visualizing numerical data
+
+We can use **scatterplots** to check for the **relationship** between two variables. When the data is obtained from a randomized controlled experiment we might conclude causation, otherwise, only correlation might be inferred (the case for observational studies).
+
+Concerning the data distribution, we can use **histograms** and **boxplots**.
+
+**Dotplots** are used for distribution, especially when data is discrete.
+
+```{r}
+x <- rnorm(100)
+y <- rnorm(100,0.5,0.5)
+z <- rbinom(100, 20, 0.5)
+## Scatterplot
+plot(x,y, main = "Scatterplot", pch = 16)
+## Histogram
+hist(x,main = "Histograma", xlab = "x", ylab = "Frecuencia")
+## Boxplot
+boxplot(x, main = "Boxplot")
+## Dotplot
+stripchart(z, method = "stack", offset = 0.5, at = 0, pch = 19, col = "steelblue", xlab = "Data Values")
+```
+
+
+## Measures of center.
+
+The most common measures for a distribution center are: 
+
+- The **mean**, which is denoted by $\mu$ for the population and $\bar{x}$ for the sample.  
+- The **median**, which is denoted by $\tilde{\mu}$ for the population and $\tilde{x}$ for the sample. This (sample) statistic (a function calculated using the sample) is robust to *outliers*.  
+- The **mode** which is not useful for continuous distributions, and it is not always a useful measure (in fact, there is not much studies about it, since the important thing is to determine if the distribution is unimodal, bimodal, or multimodal).  
+
+## Measures of dispersion.
+
+The most common measures for the **spread** around the center of a distirbution are
+
+- The **range**, which is the difference between the maximum and the minimum values. Despite its easiness to be computed, it is not a reliable measure of variability.    
+- The **variance**, denoted by $\sigma^2$ ($s^2$) for the population (sample), is roughly speaking the average squared deviation from the mean.    
+- The **standard deviation**, which is the square root of the variance. Therefore, it is denoted by $\sigma$ for the population and by $s$ for the sample.  
+- The **interquartile range**, which is the range of the middle 50% of the data, and therefore is calculated as $IQR = Q_3 - Q_1$, where $Q_1$ and $Q_3$ are the first and third quartiles, respectively.  
+
+## Robust statistics
+
+A **robust statistic** is a measure for which extreme values have little effect.
+
+Let's take a look at one example for measures of center.
+
+```{r}
+x <- c(1,2,3,4,5,6)
+mean(x)
+median(x)
+y <- c(1,2,3,4,5,1000)
+mean(y)
+median(y)
+```
+
+And now is the turn for measures of dispersion. 
+
+```{r}
+x <- c(1,2,3,4,5,6)
+sd(x)
+IQR(x)
+y <- c(1,2,3,4,5,1000)
+sd(y)
+IQR(y)
+```
+
+## Data transformations
+
+Sometimes, it is necessary to make some transformations to the data in order to making it *easier* to model.
+
+A **transformation** is a rescaling of the data using a function. One example of a transformation is the **log-transformation**, which is commonly used to assess right-skewed distributions (as long as the observations are positive, but if they are not, maybe adding a constant may do the latter assumption true).
+
+```{r}
+x <- c(rnorm(1000,3),rnorm(20,10))
+hist(x)
+y <- log(x)
+hist(y)
+```
+
+Other commonly used transformations include the **square root** and the **inverse** functions. 
+
+Remember that data transformation is used, for instance, 
+
+- to see the data structure differently.  
+- to reduce skew, and assist the modeling process.  
+- to straighten non-linear relationships in scatterplots, so we can model the relationship with **simpler** methods.  
+
+# Exploring Categorical Data and introduction to Inference.
+
+## (Summary).
+
+The distribution of a categorical variable can be studied using **frequency tables** and **bar plots**.
+
+Concerning the relationship between two categorical variables, **contingency tables** and **segmented bar plots** or **mosaic plots** are often used to assess it. 
+
+Finally, the relationship between a numerical and a categorical variable can be assessed by the **side-by-side** boxplots.
+
+## Exploring Categorical Variables.
+
+Consider to have a single categorical variable. The **frequency table** is a table with the name of the category (sometimes called levels) and the appeareance frequency in the data set. A **barplot** is a plot of the frequency observed for each category, using bars whose height can be the absolute (number of observations) or relative frequency (number of observations divided by the total observations).
+
+```{r}
+mydata <- read.csv("esperanzadevida.csv")
+head(mydata)
+table(mydata$WHO.region)
+barplot(table(mydata$WHO.region))
+barplot(table(mydata$WHO.region)/length(mydata$WHO.region))
+table(mydata$World.Bank.income.group)
+barplot(table(mydata$World.Bank.income.group))
+barplot(table(mydata$World.Bank.income.group), names.arg = c("H", "L", "LM", "UM"))
+```
+
+Please note that barplots are usually preferred over pie charts.
+
+```{r}
+pie(table(mydata$WHO.region))
+pie(table(mydata$World.Bank.income.group))
+```
+
+Contingency tables are used to evaluate the relationship between two categorical variables.
+
+```{r}
+## Create a contingency table using data frames.
+ConTable <- table(mydata$WHO.region, mydata$World.Bank.income.group)
+ConTable
+## Proportions
+prop.table(ConTable)
+## Percentages
+100*prop.table(ConTable)
+## It is possible to obtain the marginals from this Contingency Table (ConTable)
+RowMarginals <-rowSums(ConTable)
+RowMarginals
+ColumnMarginals <-colSums(ConTable)
+ColumnMarginals
+
+ConTableTotals <- cbind(ConTable, RowMarginals)
+ColumnMarginals <- colSums(ConTableTotals)
+ConTableTotals <- rbind(ConTableTotals, ColumnMarginals)
+ConTableTotals
+```
+
+Is it possible to make a **segmented bar plot**. We will need the categories for each categorial variable, and the frequency or relative frequency over all the data set. 
+
+```{r}
+## Frequency.
+barplot(as.matrix(ConTable), legend = TRUE)
+
+library(ggplot2)
+
+ggplot(data = mydata, aes(fill=WHO.region, y=Display.Value, x=World.Bank.income.group)) +geom_bar(position="fill", stat="identity")
+
+
+ggplot(data = mydata, aes(fill=WHO.region, y=Display.Value, x=World.Bank.income.group))+geom_bar(position = "stack", stat = "identity")
+
+
+newdata <- mydata
+newdata$WHO.region <- factor(newdata$WHO.region)
+newdata$World.Bank.income.group <- factor(newdata$World.Bank.income.group)
+ggplot(data = newdata, aes(x = World.Bank.income.group, fill = WHO.region))+geom_bar()
+```
+
+Or it can be also possible to make a **mosaic plot**
+
+```{r}
+mosaicplot(t(ConTable), main = "Mosaic Plot")
+```
+
+Concerning categorical and numerical variables **side-by-side boxplots** can be useful.
+
+```{r}
+boxplot(data = mydata, Display.Value ~ WHO.region, main = "Distribution by WHO Regions")
+
+boxplot(data = mydata, Display.Value ~ World.Bank.income.group, main = "Dist. by Income")
+```
+
+## Introduction to Inference.
+
+Some interesting on-line resources are:
+
+- [WebPage for Companion Materials for "Statistics Unlocking the power of data"](http://www.lock5stat.com/).  
+- [Instructor's materials on-line](https://www2.stat.duke.edu/courses/Spring13/sta101.001/slides/unit1lec3H.pdf)
