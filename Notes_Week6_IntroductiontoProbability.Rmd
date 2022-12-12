@@ -1,0 +1,27 @@
+---
+title: "Notes_Week6_IntroductiontoProbability"
+author: "Jorge A. Garza-Venegas"
+date: "12/12/2022"
+output: html_document
+---
+
+## Independence
+
+**Definition:** Two processes are **independent** if knowing the outcome of one provides no useful information about the outcome of the other. 
+
+Examples: outcomes of two tosses of a coin (**independent**) and drawing two cards (without replacement) from a pokar deck of cards (**non-independent**).
+
+Some results related to **independency**:
+
+- If $P\left(A|B\right) = P\left(A\right)$ then it is said that **$A$ and $B$ are independent** events.  
+- (Product rule). If $A$ and $B$ are **independent**, then $P\left(A \cap B\right) = P\left(A\right)\cdot P\left(B\right)$
+
+## Probability examples.
+
+**General addition rule**: $P\left(A \cup B\right) = P\left(A\right) + P\left(B\right) - P\left(A\cap B\right)$.
+
+## Disjoint vs. independent.
+
+**Disjoint**: two events that are **disjoint (mutually exclusive)** cannot happen at the same time.
+
+**Independent**: two processes are **independent** if knowing the outcome of one provides no useful information about the outcome of the other.
