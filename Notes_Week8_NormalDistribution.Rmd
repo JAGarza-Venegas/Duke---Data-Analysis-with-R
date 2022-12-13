@@ -1,0 +1,175 @@
+---
+title: 'Notes Week 8: Normal distribution and Binomial Distribution'
+author: "Jorge A. Garza-Venegas"
+date: "12/12/2022"
+output: html_document
+---
+
+## Normal distribution.
+
+To compare two different distributions, we can use the $Z$-scores:
+
+**standardized (Z) score** of an observation is the number of standard deviations it falls above or below the mean. It is calculated as
+
+\[
+    Z_{score} = \dfrac{observation-mean}{sd}
+\]
+
+Therefore, the $Z$-score of the mean is $0$, and any observation with a $Z$-score with absolute value grater than $2$ is considered as **unusual** observation. That is true for any distribution shape, not only the normal distribution.
+
+When the distribution is normal, $Z$ scores can be used to calculate **percentiles**, defined as the percentage of observations that fall below a given data point. Calculus is required for this task, as percentiles are graphically the area below the pdf curve to the left of that observation, specially for non-normal distributions. 
+
+Fortunately, there are routines in R to do that.
+
+```{r}
+pnorm(-1,mean = 0, sd = 1)
+qnorm(0.75,mean = 0, sd = 1)
+```
+
+There are applets to use on-line, for instance: https://gallery.shinyapps.io/dist_calc/
+
+Now, the computation of a percentile:
+
+```{r}
+pnorm(1800,mean = 1500, sd = 300)
+```
+
+So, Pam's percentile is 0.8413 meaning that her score is better than the 84.13% of the test takers.
+
+ACT scores are distributed nearly normally with mean 21 and standard deviation 5. A friend of yours tells you that she scored in the bottom 10% on the ACT. What is the highest possible score she coudl have gotten? 
+
+```{r}
+qnorm(0.1, mean = 21, sd = 5)
+```
+
+## Evaluating the normal distribution.
+
+Sometimes, there can be "jumps" in a normal probability plot. This can be explained by something that has to do with the data collection/presentation: some measurements (as heights) are usually rounded when being reported.
+
+**On a right skew distribution**: points bend **up** and to the **left** of the line
+```{r}
+rs_data_discrete <-rgeom(n = 1000, prob = 0.4)
+hist(rs_data_discrete)
+qqnorm(rs_data_discrete); qqline(rs_data_discrete)
+
+rs_data_continuous <-rchisq(n = 1000, df = 3)
+hist(rs_data_continuous)
+qqnorm(rs_data_continuous); qqline(rs_data_continuous)
+```
+
+**On a left skew distribution**: points bend **down** and to the **right** of the line
+```{r}
+rs_data_discrete <- rbinom(n = 1000, size = 100, prob = 0.95)
+hist(rs_data_discrete)
+qqnorm(rs_data_discrete); qqline(rs_data_discrete)
+
+rs_data_continuous <-rbeta(n = 1000, shape1 = 5, shape2 = 1)
+hist(rs_data_continuous)
+qqnorm(rs_data_continuous); qqline(rs_data_continuous)
+```
+
+
+**On a distribution with short tails**: points follow an **S shaped-curve**
+```{r}
+# rs_data_discrete <- rbinom(n = 1000, size = 100, prob = 0.95)
+# hist(rs_data_discrete)
+# qqnorm(rs_data_discrete); qqline(rs_data_discrete)
+
+rs_data_continuous <-runif(n = 1000, min = 0, max = 1)
+hist(rs_data_continuous)
+qqnorm(rs_data_continuous); qqline(rs_data_continuous)
+```
+
+**On a distribution with long tails**: (wider than the normal distribution)  points **start below** the line, bend to follow it, and end **above it**:
+
+```{r}
+# rs_data_discrete <- rbinom(n = 1000, size = 100, prob = 0.95)
+# hist(rs_data_discrete)
+# qqnorm(rs_data_discrete); qqline(rs_data_discrete)
+
+rs_data_continuous <-rt(n = 1000, df = 2)
+hist(rs_data_continuous)
+qqnorm(rs_data_continuous); qqline(rs_data_continuous)
+```
+
+
+## Binomial distribution
+
+Check the Milgram's experiment: https://en.wikipedia.org/wiki/Milgram_experiment. 
+
+
+- each person in the experiment can be viewed as a **trial**  
+- a **success** is considered when a person refuses to administer a severe shock, otherwise, it is a **failure** (he/she administer the severe shock)  
+- probability of **success** is 0.35, since only 35% of people refused to administer a shock  
+- when an individual trial has only two possible outcomes, it is called a **Bernoulli random variable**
+
+A **binomial distribution** describes the probability of having exactly $k$ successes in $n$ independent Bernoulli trials with probability of success $p$
+
+How many scenarios yield 2 successes in 9 trials?
+
+```{r}
+scenarios <- choose(9,2)
+scenarios
+```
+
+There are `r scenarios` scenarios.
+
+Calculating binomial probabilities.
+```{r}
+pEvent <- dbinom(x = 8, size = 10, prob = 0.13)
+pEvent
+```
+
+## Normal Approximation to Binomial.
+
+The probability of a Facebook friend user is a *power user* is estimated at $p = 0.25$ and the average number for friends per user is $245$. What is the probability of having $70$ or more friends considered as power users?
+
+```{r}
+n <- 245
+p <- 0.25
+pBinomial <- pbinom(q = 69, size = n, prob = p,lower.tail = F)
+pBinomial
+1-pbinom(69, size = n, prob = p)
+
+## Normal approximation
+mu.hat = n*p
+sd.hat = sqrt(n*p*(1-p))
+Z = (70-mu.hat)/sd.hat
+pnorm(Z, lower.tail = F)
+
+## Correction
+Z = (70-0.5-mu.hat)/sd.hat
+pnorm(Z, lower.tail = F)
+```
+
+**Rule of thumb:** A binomial distribution with at least 10 expected successes and 10 exprected failure closely follows a normal distribution
+
+\[
+\begin{split}
+np & \geq 10 \\
+np(1-p) & \geq 10
+\end{split}
+\]
+
+```{r}
+pBinomial <- dbinom(x = 6, size = 10, prob = 0.56)
+pBinomial
+```
+Probability at least 60 out of a random sample of 100 uninsured Americans plan to get the health insurance through a government health insurance exchange?
+
+```{r}
+pBinomial <- sum(dbinom(60:100,size = 100, prob = 0.56))
+pBinomial
+pBinomial <- 1-pbinom(q = 59, size = 100, prob = 0.56)
+pBinomial
+n<-100
+p<-0.56
+mu.hat = n*p
+sd.hat = sqrt(n*p*(1-p))
+pAprox <- pnorm(q = (60-mu.hat)/sd.hat, lower.tail = F)
+pAprox
+## Correction
+pAprox <- pnorm(q = (60-0.5-mu.hat)/sd.hat, lower.tail = F)
+pAprox
+```
+
