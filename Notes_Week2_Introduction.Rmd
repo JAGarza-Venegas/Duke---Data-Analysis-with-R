@@ -53,7 +53,7 @@ Some final terms:
 
 - **placebo** is a fake treatement, often used as the control group for medical studies.  
 - **placebo effect** is when subjects show changes despite they received the placebo.  
-- **blinding** menas that experimental units do not know which group they are in.  
+- **blinding** means that experimental units do not know which group they are in.  
 - **double-blinding** is when both the experimental units and the researchers do not known the group assignment.
 
 
